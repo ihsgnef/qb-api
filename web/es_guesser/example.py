@@ -37,6 +37,18 @@ class ThresholdBuzzer:
         return buzz
 
 
+@retry(wait_fixed=60000, 
+       stop_max_attempt_number=10)
+def submit_answer(qid, answer):
+    time.sleep(1) # delay one second
+    server.submit_answer(qid, answer)
+
+@retry(wait_fixed=60000, 
+       stop_max_attempt_number=10)
+def get_word(qid, i):
+    time.sleep(1) # delay one second
+    return server.get_word(qid, i)
+
 def main():
     # train elasticsearch guesser
     esguesser = ElasticSearchGuesser()
@@ -84,19 +96,6 @@ def main():
         print("\nANSWERING! %i %i (%s)" %
                 (next_q, qlen, answer))
         submit_answer(next_q, answer)
-
-@retry(wait_fixed=60000, 
-       stop_max_attempt_number=10)
-def submit_answer(qid, answer):
-    time.sleep(1) # delay one second
-    server.submit_answer(qid, answer)
-
-@retry(wait_fixed=60000, 
-       stop_max_attempt_number=10)
-def get_word(qid, i):
-    time.sleep(1) # delay one second
-    return server.get_word(qid, i)
-
 
 if __name__ == '__main__':
     main()
